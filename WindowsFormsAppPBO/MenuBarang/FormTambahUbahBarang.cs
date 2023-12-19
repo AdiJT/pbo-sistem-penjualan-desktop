@@ -7,6 +7,7 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Windows.Forms;
 using WindowsFormsAppPBO.Entitas;
+using WindowsFormsAppPBO.Repositori.Commons;
 
 namespace WindowsFormsAppPBO.MenuBarang
 {
@@ -20,14 +21,21 @@ namespace WindowsFormsAppPBO.MenuBarang
 
         bool isBarangValid = true;
         bool isDetailValid = true;
-        private readonly AppDbContext db;
+        private readonly IBaseRepositori<Barang> repositoriBarang;
+        private readonly IBaseRepositori<Kategori> repositoriKategori;
+        private readonly IBaseRepositori<Satuan> repositoriSatuan;
 
-        public FormTambahUbahBarang(AppDbContext db)
+        public FormTambahUbahBarang(IBaseRepositori<Barang> repositoriBarang,
+            IBaseRepositori<Kategori> repositoriKategori,
+            IBaseRepositori<Satuan> repositoriSatuan)
         {
-            InitializeComponent();
-            this.db = db;
+            this.repositoriBarang = repositoriBarang;
+            this.repositoriKategori = repositoriKategori;
+            this.repositoriSatuan = repositoriSatuan;
 
-            var listKategori = db.TblKategori.ToList();
+            InitializeComponent();
+
+            var listKategori = repositoriKategori.GetAll();
             if (listKategori.Count > 0)
             {
                 comboBoxKategori.DataSource = listKategori;
@@ -36,7 +44,7 @@ namespace WindowsFormsAppPBO.MenuBarang
                 comboBoxKategori.SelectedIndex = 0;
             }
 
-            var listSatuan = db.TblSatuan.ToList();
+            var listSatuan = repositoriSatuan.GetAll();
             if(listSatuan.Count > 0)
             {
                 comboBoxSatuan.DataSource = listSatuan;
@@ -75,7 +83,7 @@ namespace WindowsFormsAppPBO.MenuBarang
                 listDetail = SelectedBarang.DaftarDetailBarang.ToList();
 
                 for (int i = 0; i < listDetail.Count; i++)
-                    listDetail[i].Satuan = db.TblSatuan.Find(listDetail[i].KodeSatuan);
+                    listDetail[i].Satuan = repositoriSatuan.Get(listDetail[i].KodeSatuan);
 
                 if (listDetail.Count > 0)
                 {
@@ -147,11 +155,10 @@ namespace WindowsFormsAppPBO.MenuBarang
             
             barangBaru.DaftarDetailBarang = listDetailBaru;
             
-            var validator = new ValidatorBarang(db);
+            var validator = new ValidatorBarang(AppDbContext.GetDbContext);
             validator.Validate(barangBaru, options => options.ThrowOnFailures());
-            
-            db.TblBarang.Add(barangBaru);
-            db.SaveChanges();
+
+            repositoriBarang.Add(barangBaru);
             
             Utilitas.ShowSuccess("Barang berhasil ditambahkan!");
         }
@@ -161,18 +168,8 @@ namespace WindowsFormsAppPBO.MenuBarang
             var namaBarang = textBoxNamaBarang.Text;
             var idKategori = comboBoxKategori.SelectedValue?.ToString();
 
-            db.TblBarang.Attach(SelectedBarang);
-
             SelectedBarang.NamaBarang = namaBarang;
             SelectedBarang.IdKategori = idKategori;
-
-            var listDetailLama = SelectedBarang.DaftarDetailBarang.ToList();
-
-            foreach(var detail in listDetailLama)
-            {
-                db.TblDetailBarang.Remove(detail);
-            }
-            db.SaveChanges();
 
             var listDetailBaru = listDetail.Select(d => new DetailBarang()
             {
@@ -184,13 +181,16 @@ namespace WindowsFormsAppPBO.MenuBarang
 
             SelectedBarang.DaftarDetailBarang = listDetailBaru;
 
-            db.SaveChanges();
+            repositoriBarang.Update(SelectedBarang.KodeBarang, SelectedBarang);
 
             Utilitas.ShowSuccess("Barang berhasil dirubah!");
         }
 
         private void dataGridViewDetail_CellClick(object sender, DataGridViewCellEventArgs e)
         {
+            if (e.RowIndex < 0)
+                return;
+
             var kodeSatuan = dataGridViewDetail.Rows[e.RowIndex].Cells[0].Value.ToString();
 
             if (kodeSatuan != null)
@@ -225,7 +225,7 @@ namespace WindowsFormsAppPBO.MenuBarang
                 var harga = decimal.Parse(textBoxHargaBarang.Text);
                 var stok = int.Parse(textBoxStok.Text);
 
-                var satuan = db.TblSatuan.Find(kodeSatuan);
+                var satuan = repositoriSatuan.Get(kodeSatuan);
 
                 var detailBaru = new DetailBarang()
                 {
@@ -255,7 +255,7 @@ namespace WindowsFormsAppPBO.MenuBarang
             {
                 errorProvider1.SetError(textBox, null);
 
-                var validator = new DetailBarangValidator(db);
+                var validator = new DetailBarangValidator(AppDbContext.GetDbContext);
                 var strTextBox = textBox.Text.Trim();
                 T nilai = default;
                 var detail = new DetailBarang();
@@ -296,7 +296,7 @@ namespace WindowsFormsAppPBO.MenuBarang
             {
                 errorProvider1.SetError(textBox, null);
 
-                var validator = new ValidatorBarang(db);
+                var validator = new ValidatorBarang(AppDbContext.GetDbContext);
                 var strTextBox = textBox.Text.Trim();
                 T nilai = default;
                 var barang = new Barang();

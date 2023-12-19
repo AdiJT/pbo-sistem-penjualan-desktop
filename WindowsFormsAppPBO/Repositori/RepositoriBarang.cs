@@ -28,7 +28,9 @@ namespace WindowsFormsAppPBO.Repositori
         public override Barang Get(string id)
         {
             var result = dbContext.TblBarang.Include(b => b.Kategori)
-                .Include(b => b.DaftarDetailBarang).FirstOrDefault(b => b.KodeBarang == id);
+                .Include(b => b.DaftarDetailBarang)
+                .AsNoTracking()
+                .FirstOrDefault(b => b.KodeBarang == id);
 
             return result;
         }

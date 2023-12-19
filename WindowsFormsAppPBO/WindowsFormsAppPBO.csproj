@@ -164,6 +164,13 @@
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Repositori\Commons\IBaseRepositori.cs" />
+    <Compile Include="Repositori\Commons\BaseSqlRepositori.cs" />
+    <Compile Include="Repositori\RepositoriBarang.cs" />
+    <Compile Include="Repositori\RepositoriKategori.cs" />
+    <Compile Include="Repositori\RepositoriKonsumen.cs" />
+    <Compile Include="Repositori\RepositoriSatuan.cs" />
+    <Compile Include="Repositori\RepositoriTransaksi.cs" />
     <Compile Include="Utilitas.cs" />
     <EmbeddedResource Include="FormMain.resx">
       <DependentUpon>FormMain.cs</DependentUpon>

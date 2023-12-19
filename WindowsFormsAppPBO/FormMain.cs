@@ -17,6 +17,7 @@ using WindowsFormsAppPBO.MenuKategori;
 using WindowsFormsAppPBO.MenuKonsumen;
 using WindowsFormsAppPBO.MenuSatuan;
 using WindowsFormsAppPBO.MenuTransaksi;
+using WindowsFormsAppPBO.Repositori;
 
 namespace WindowsFormsAppPBO
 {
@@ -334,7 +335,8 @@ namespace WindowsFormsAppPBO
 
         private void barangToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            var formBarang = new FormBarang(AppDbContext.GetDbContext);
+            var formBarang = new FormBarang(new RepositoriBarang(AppDbContext.GetDbContext), 
+                new RepositoriKategori(AppDbContext.GetDbContext), new RepositoriSatuan(AppDbContext.GetDbContext));
             this.Hide();
             formBarang.Show();
         }

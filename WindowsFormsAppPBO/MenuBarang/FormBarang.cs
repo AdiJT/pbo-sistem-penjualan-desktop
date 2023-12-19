@@ -9,24 +9,32 @@ using System.Threading.Tasks;
 using WindowsFormsAppPBO.Entitas;
 using System.Windows.Forms;
 using System.Data.Entity;
+using WindowsFormsAppPBO.Repositori.Commons;
 
 namespace WindowsFormsAppPBO.MenuBarang
 {
     public partial class FormBarang : Form
     {
-        private readonly AppDbContext db;
+        private readonly IBaseRepositori<Barang> repositoriBarang;
+        private readonly IBaseRepositori<Kategori> repositoriKategori;
+        private readonly IBaseRepositori<Satuan> repositoriSatuan;
 
         public Barang SelectedBarang { get; set; }
 
-        public FormBarang(AppDbContext db)
+        public FormBarang(IBaseRepositori<Barang> repositoriBarang, 
+            IBaseRepositori<Kategori> repositoriKategori,
+            IBaseRepositori<Satuan> repositoriSatuan)
         {
             InitializeComponent();
-            this.db = db;
+            this.repositoriBarang = repositoriBarang;
+            this.repositoriKategori = repositoriKategori;
+            this.repositoriSatuan = repositoriSatuan;
         }
 
         private void buttonTambah_Click(object sender, EventArgs e)
         {
-            var formTambahUbahBarang = new FormTambahUbahBarang(db);
+            var formTambahUbahBarang = new FormTambahUbahBarang(repositoriBarang, repositoriKategori,
+                repositoriSatuan);
             formTambahUbahBarang.EditMode = false;
             formTambahUbahBarang.ShowDialog();
             RefreshDataGridData();
@@ -34,7 +42,7 @@ namespace WindowsFormsAppPBO.MenuBarang
 
         private void RefreshDataGridData()
         {
-            var listBarang = db.TblBarang.ToList();
+            var listBarang = repositoriBarang.GetAll();
             dataGridViewData.DataSource = listBarang.Select(b => new
             {
                 b.KodeBarang,
@@ -47,7 +55,7 @@ namespace WindowsFormsAppPBO.MenuBarang
         {
             if (SelectedBarang != null)
             {
-                var listDetail = db.TblBarang.Find(SelectedBarang.KodeBarang).DaftarDetailBarang.ToList();
+                var listDetail = repositoriBarang.Get(SelectedBarang.KodeBarang).DaftarDetailBarang.ToList();
                 var listDataSource = listDetail.Select(dt => new
                 {
                     dt.KodeSatuan,
@@ -79,7 +87,8 @@ namespace WindowsFormsAppPBO.MenuBarang
         {
             if (SelectedBarang != null)
             {
-                var formTambahUbahBarang = new FormTambahUbahBarang(db);
+                var formTambahUbahBarang = new FormTambahUbahBarang(repositoriBarang, repositoriKategori,
+                    repositoriSatuan);
                 formTambahUbahBarang.SelectedBarang = SelectedBarang;
                 formTambahUbahBarang.EditMode = true;
                 formTambahUbahBarang.ShowDialog();
@@ -94,9 +103,7 @@ namespace WindowsFormsAppPBO.MenuBarang
                 string kodeBarang = dataGridViewData.Rows[e.RowIndex].Cells[0].Value.ToString();
                 if (kodeBarang != null)
                 {
-                    SelectedBarang = db.TblBarang.Include(b => b.Kategori)
-                        .Include(b => b.DaftarDetailBarang)
-                        .FirstOrDefault(b => b.KodeBarang == kodeBarang);
+                    SelectedBarang = repositoriBarang.Get(kodeBarang);
                 }
             }
         }
@@ -114,11 +121,9 @@ namespace WindowsFormsAppPBO.MenuBarang
                 {
                     foreach (var item in listBarangTerpilih)
                     {
-                        var barang = db.TblBarang.Find(item);
-                        db.TblBarang.Remove(barang);
+                        repositoriBarang.Delete(item);
                     }
 
-                    db.SaveChanges();
                     Utilitas.ShowSuccess($"{listBarangTerpilih.Count} Barang berhasil dihapus!");
                     dataGridViewData.ClearSelection();
                     SelectedBarang = null;
