@@ -17,12 +17,21 @@ namespace WindowsFormsAppPBO.Repositori.Commons
 
         public virtual T Add(T item)
         {
-            throw new NotImplementedException();
+            var result = dbContext.Set<T>().Add(item);
+            dbContext.SaveChanges();
+            return result;
         }
 
         public virtual T Delete(string id)
         {
-            throw new NotImplementedException();
+            var result = dbContext.Set<T>().Find(id);
+            if(result != null)
+            {
+                dbContext.Set<T>().Remove(result);
+                dbContext.SaveChanges();
+            }
+
+            return result;
         }
 
         public virtual T Get(string id)
@@ -40,9 +49,18 @@ namespace WindowsFormsAppPBO.Repositori.Commons
             return result;
         }
 
-        public virtual T Update(T item)
+        public virtual T Update(string id, T item)
         {
-            throw new NotImplementedException();
+            var result = dbContext.Set<T>().Find(id);
+            if(result != null)
+            {
+                foreach(var property in result.GetType().GetProperties())
+                {
+                    property.SetValue(result, property.GetValue(item));
+                }
+                dbContext.SaveChanges();
+            }
+            return result;
         }
     }
 }

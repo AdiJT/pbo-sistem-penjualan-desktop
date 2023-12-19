@@ -11,7 +11,7 @@ namespace WindowsFormsAppPBO.Repositori.Commons
         IList<T> GetAll();
         T Get(string id);
         T Add(T item);
-        T Update(T item);
+        T Update(string id, T item);
         T Delete(string id);
     }
 }
