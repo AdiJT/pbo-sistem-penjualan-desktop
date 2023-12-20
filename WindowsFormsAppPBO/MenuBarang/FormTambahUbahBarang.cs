@@ -76,7 +76,7 @@ namespace WindowsFormsAppPBO.MenuBarang
         {
             if (SelectedBarang != null)
             {
-                textBoxKodeBarang.Text = SelectedBarang.KodeBarang;
+                textBoxKodeBarang.Text = SelectedBarang.Id;
                 textBoxNamaBarang.Text = SelectedBarang.NamaBarang;
                 comboBoxKategori.SelectedItem = SelectedBarang.Kategori;
 
@@ -140,14 +140,14 @@ namespace WindowsFormsAppPBO.MenuBarang
             
             var barangBaru = new Barang()
             {
-                KodeBarang = kodeBarang,
+                Id = kodeBarang,
                 NamaBarang = namaBarang,
                 IdKategori = idKategori,
             };
             
             var listDetailBaru = listDetail.Select(d => new DetailBarang()
             {
-                KodeBarang = barangBaru.KodeBarang,
+                KodeBarang = barangBaru.Id,
                 KodeSatuan = d.KodeSatuan,
                 HargaBarang = d.HargaBarang,
                 StokBarang = d.StokBarang
@@ -181,7 +181,7 @@ namespace WindowsFormsAppPBO.MenuBarang
 
             SelectedBarang.DaftarDetailBarang = listDetailBaru;
 
-            repositoriBarang.Update(SelectedBarang.KodeBarang, SelectedBarang);
+            repositoriBarang.Update(SelectedBarang.Id, SelectedBarang);
 
             Utilitas.ShowSuccess("Barang berhasil dirubah!");
         }
@@ -236,7 +236,7 @@ namespace WindowsFormsAppPBO.MenuBarang
                 };
 
                 if (EditMode == true)
-                    detailBaru.KodeBarang = SelectedBarang.KodeBarang;
+                    detailBaru.KodeBarang = SelectedBarang.Id;
 
                 listDetail.Add(detailBaru);
 
@@ -368,7 +368,7 @@ namespace WindowsFormsAppPBO.MenuBarang
 
         private void textBoxKodeBarang_Validating(object sender, System.ComponentModel.CancelEventArgs e)
         {
-            ValidateTextBoxBarang<string>("Kode Barang", b => b.KodeBarang, textBoxKodeBarang, s => s, e);
+            ValidateTextBoxBarang<string>("Kode Barang", b => b.Id, textBoxKodeBarang, s => s, e);
         }
 
         private void textBoxNamaBarang_Validating(object sender, System.ComponentModel.CancelEventArgs e)

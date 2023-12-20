@@ -37,7 +37,7 @@ namespace WindowsFormsAppPBO.MenuSatuan
             {
                 labelJudul.Text = "Ubah Satuan";
 
-                textBoxKodeSatuan.Text = SelectedSatuan.KodeSatuan;
+                textBoxKodeSatuan.Text = SelectedSatuan.Id;
                 textBoxNamaSatuan.Text = SelectedSatuan.NamaSatuan;
 
                 textBoxKodeSatuan.Enabled = false;
@@ -51,12 +51,12 @@ namespace WindowsFormsAppPBO.MenuSatuan
                 errorProvider1.SetError(textBoxKodeSatuan, null);
 
                 var kodeSatuan = textBoxKodeSatuan.Text.Trim();
-                var satuan = new Satuan { KodeSatuan = kodeSatuan };
+                var satuan = new Satuan { Id = kodeSatuan };
 
                 var validator = new ValidatorSatuan();
                 validator.Validate(satuan, options =>
                 {
-                    options.IncludeProperties(s => s.KodeSatuan);
+                    options.IncludeProperties(s => s.Id);
                     options.ThrowOnFailures();
                 });
             }
@@ -111,7 +111,7 @@ namespace WindowsFormsAppPBO.MenuSatuan
 
                     var satuan = new Satuan
                     {
-                        KodeSatuan = kodeSatuan,
+                        Id = kodeSatuan,
                         NamaSatuan = namaSatuan
                     };
 

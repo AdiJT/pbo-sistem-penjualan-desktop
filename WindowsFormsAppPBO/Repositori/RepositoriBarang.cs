@@ -30,7 +30,7 @@ namespace WindowsFormsAppPBO.Repositori
             var result = dbContext.TblBarang.Include(b => b.Kategori)
                 .Include(b => b.DaftarDetailBarang)
                 .AsNoTracking()
-                .FirstOrDefault(b => b.KodeBarang == id);
+                .FirstOrDefault(b => b.Id == id);
 
             return result;
         }

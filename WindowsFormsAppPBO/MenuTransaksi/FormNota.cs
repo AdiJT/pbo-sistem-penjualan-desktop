@@ -55,7 +55,7 @@ namespace WindowsFormsAppPBO.MenuTransaksi
                 var path = textBoxPathFile.Text.Trim();
                 if (path.Length == 0)
                     throw new Exception("Pilih folder untuk menyimpan nota terlebih dahulu");
-                path += $@"\nota-{SelectedTransaksi.IdTransaksi}-{SelectedTransaksi.Tanggal:D}.txt";
+                path += $@"\nota-{SelectedTransaksi.Id}-{SelectedTransaksi.Tanggal:D}.txt";
                 using (var sw = new StreamWriter(path))
                 {
                     sw.WriteLine(richTextBoxNota.Text);

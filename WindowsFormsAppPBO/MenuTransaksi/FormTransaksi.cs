@@ -29,9 +29,9 @@ namespace WindowsFormsAppPBO.MenuTransaksi
             var listTransaksi = db.TblTransaksi.ToList();
             var listTransaksiFormat = listTransaksi.Select(t =>
             new {
-                t.IdTransaksi,
+                t.Id,
                 t.IdKonsumen,
-                db.TblKonsumen.Find(t.Konsumen.IdKonsumen)?.NamaKonsumen,
+                db.TblKonsumen.Find(t.Konsumen.Id)?.NamaKonsumen,
                 Tanggal = $"{t.Tanggal:d}",
                 Diskon = $"{t.Diskon}%",
                 Total = $"{t.Total:C2}"
@@ -72,7 +72,7 @@ namespace WindowsFormsAppPBO.MenuTransaksi
                 string idTransaksi = dataGridViewData.Rows[e.RowIndex].Cells[0].Value.ToString();
                 if (idTransaksi != null)
                 {
-                    SelectedTransaksi = db.TblTransaksi.Include("DaftarDetailTransaksi").FirstOrDefault(dt => dt.IdTransaksi == idTransaksi);
+                    SelectedTransaksi = db.TblTransaksi.Include("DaftarDetailTransaksi").FirstOrDefault(dt => dt.Id == idTransaksi);
                 }
             }
         }
@@ -125,7 +125,7 @@ namespace WindowsFormsAppPBO.MenuTransaksi
         {
             if(SelectedTransaksi != null)
             {
-                labelDetailTransaksi.Text = $"Detail Transaksi : {SelectedTransaksi.IdTransaksi}";
+                labelDetailTransaksi.Text = $"Detail Transaksi : {SelectedTransaksi.Id}";
                 RefreshDataGridDetail();
             }
         }

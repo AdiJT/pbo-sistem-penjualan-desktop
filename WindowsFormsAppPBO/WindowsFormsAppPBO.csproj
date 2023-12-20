@@ -239,6 +239,7 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       <DependentUpon>PenjualanDesktop.mdf</DependentUpon>
     </Content>
+    <Compile Include="Entitas\Commons\BaseEntitas.cs" />
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include=".NETFramework,Version=v4.8">

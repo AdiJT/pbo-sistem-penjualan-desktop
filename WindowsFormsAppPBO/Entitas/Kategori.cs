@@ -5,14 +5,12 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using WindowsFormsAppPBO.Entitas.Commons;
 
 namespace WindowsFormsAppPBO.Entitas
 {
-    public class Kategori
+    public class Kategori : BaseEntitas
     {
-        [Key]
-        public string IdKategori { get; set; }
-
         public string NamaKategori { get; set; }
 
         public virtual IList<Barang> DaftarBarang { get; set; }
@@ -22,9 +20,9 @@ namespace WindowsFormsAppPBO.Entitas
     {
         public ValidatorKategori()
         {
-            RuleFor(k => k.IdKategori).NotEmpty().WithName("Kode Kategori")
+            RuleFor(k => k.Id).NotEmpty().WithName("Kode Kategori")
                 .WithMessage("{PropertyName} belum diisi")
-                .Matches(@"^K+[0-9]{3}$").When(s => !string.IsNullOrEmpty(s.IdKategori), ApplyConditionTo.CurrentValidator)
+                .Matches(@"^K+[0-9]{3}$").When(s => !string.IsNullOrEmpty(s.Id), ApplyConditionTo.CurrentValidator)
                 .WithMessage("Format {PropertyName} adalah K diikuti 3 digit angka");
 
             RuleFor(k => k.NamaKategori).NotEmpty().WithName("Nama Kategori")

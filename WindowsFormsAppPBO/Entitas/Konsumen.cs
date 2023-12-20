@@ -5,12 +5,12 @@ using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using WindowsFormsAppPBO.Entitas.Commons;
 
 namespace WindowsFormsAppPBO.Entitas
 {
-    public class Konsumen
+    public class Konsumen : BaseEntitas
     {
-        public string IdKonsumen { get; set; }
         public string NamaKonsumen { get; set; }
         public string NoHP { get; set; }
         public string Alamat { get; set; }
@@ -22,7 +22,7 @@ namespace WindowsFormsAppPBO.Entitas
     {
         public ValidatorKonsumen()
         {
-            RuleFor(k => k.IdKonsumen).NotEmpty().WithName("Id Konsumen")
+            RuleFor(k => k.Id).NotEmpty().WithName("Id Konsumen")
                 .WithMessage("{PropertyName} belum diisi");
 
             RuleFor(k => k.NamaKonsumen).NotEmpty().WithName("Nama Konsumen")

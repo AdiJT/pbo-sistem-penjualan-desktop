@@ -133,7 +133,7 @@ namespace WindowsFormsAppPBO
                 {
                     SelectedKonsumen = new Konsumen
                     {
-                        IdKonsumen = Guid.NewGuid().ToString(),
+                        Id = Guid.NewGuid().ToString(),
                         NamaKonsumen = namaKonsumen
                     }, 
                     Mode = FormMode.Add
@@ -147,11 +147,11 @@ namespace WindowsFormsAppPBO
 
             var transaksiBaru = new Transaksi()
             {
-                IdTransaksi = idTransaksi,
+                Id = idTransaksi,
                 Tanggal = tanggal,
                 Diskon = diskon,
                 DaftarDetailTransaksi = listDetail,
-                IdKonsumen = konsumen.IdKonsumen
+                IdKonsumen = konsumen.Id
             };
 
             var validator = new ValidatorTransaksi(db);
@@ -187,7 +187,7 @@ namespace WindowsFormsAppPBO
             if (kodeBarang != "")
             {
                 var barang = db.TblBarang.Include("DaftarDetailBarang").AsNoTracking()
-                    .Where(b => b.KodeBarang.Contains(kodeBarang)).FirstOrDefault();
+                    .Where(b => b.Id.Contains(kodeBarang)).FirstOrDefault();
                 if (barang != null)
                 {
                     labelHasilCari.Text = barang.NamaBarang;
@@ -228,7 +228,7 @@ namespace WindowsFormsAppPBO
 
                 var detailBaru = new DetailTransaksi()
                 {
-                    KodeBarang = currentBarang.KodeBarang,
+                    KodeBarang = currentBarang.Id,
                     KodeSatuan = currentDetailBarang.KodeSatuan,
                     NamaBarang = currentBarang.NamaBarang,
                     NamaSatuan = currentDetailBarang.NamaSatuan,
@@ -321,7 +321,7 @@ namespace WindowsFormsAppPBO
 
             if (currentBarang != null)
             {
-                var kodeBarang = currentBarang.KodeBarang;
+                var kodeBarang = currentBarang.Id;
                 var kodeSatuan = comboBoxSatuan.SelectedValue.ToString();
 
                 currentDetailBarang = currentBarang.DaftarDetailBarang.FirstOrDefault(dt => dt.KodeSatuan == kodeSatuan);

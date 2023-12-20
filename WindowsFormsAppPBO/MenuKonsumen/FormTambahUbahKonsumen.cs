@@ -37,7 +37,7 @@ namespace WindowsFormsAppPBO.MenuKonsumen
             {
                 labelJudul.Text = "Ubah Konsumen";
 
-                textBoxIdKonsumen.Text = SelectedKonsumen.IdKonsumen;
+                textBoxIdKonsumen.Text = SelectedKonsumen.Id;
                 textBoxNamaKonsumen.Text = SelectedKonsumen.NamaKonsumen;
                 textBoxNoHp.Text = SelectedKonsumen.NoHP;
                 textBoxAlamat.Text = SelectedKonsumen.Alamat;
@@ -47,7 +47,7 @@ namespace WindowsFormsAppPBO.MenuKonsumen
 
             if(SelectedKonsumen != null)
             {
-                textBoxIdKonsumen.Text = SelectedKonsumen.IdKonsumen;
+                textBoxIdKonsumen.Text = SelectedKonsumen.Id;
                 textBoxNamaKonsumen.Text = SelectedKonsumen.NamaKonsumen;
                 textBoxNoHp.Text = SelectedKonsumen.NoHP;
                 textBoxAlamat.Text = SelectedKonsumen.Alamat;
@@ -61,12 +61,12 @@ namespace WindowsFormsAppPBO.MenuKonsumen
                 errorProvider1.SetError(textBoxIdKonsumen, null);
 
                 var idKonsumen = textBoxIdKonsumen.Text.Trim();
-                var konsumen = new Konsumen { IdKonsumen = idKonsumen };
+                var konsumen = new Konsumen { Id = idKonsumen };
 
                 var validator = new ValidatorKonsumen();
                 validator.Validate(konsumen, options =>
                 {
-                    options.IncludeProperties(k => k.IdKonsumen);
+                    options.IncludeProperties(k => k.Id);
                     options.ThrowOnFailures();
                 });
             }
@@ -179,7 +179,7 @@ namespace WindowsFormsAppPBO.MenuKonsumen
 
                     var Konsumen = new Konsumen
                     {
-                        IdKonsumen = idKonsumen,
+                        Id = idKonsumen,
                         NamaKonsumen = namaKonsumen,
                         NoHP = noHp,
                         Alamat = alamat,

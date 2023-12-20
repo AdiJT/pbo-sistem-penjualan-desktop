@@ -6,12 +6,12 @@ using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using WindowsFormsAppPBO.Entitas.Commons;
 
 namespace WindowsFormsAppPBO.Entitas
 {
-    public class Barang
+    public class Barang : BaseEntitas
     {
-        public string KodeBarang { get; set; }
         public string NamaBarang { get; set; }
 
         //Foreign Key
@@ -30,8 +30,8 @@ namespace WindowsFormsAppPBO.Entitas
         {
             this.db = db;
 
-            RuleFor(b => b.KodeBarang).NotEmpty().WithName("Kode Barang").WithMessage("{PropertyName} belum diisi")
-                .Matches(@"^B+[0-9]{3}$").When(b => !string.IsNullOrEmpty(b.KodeBarang), ApplyConditionTo.CurrentValidator)
+            RuleFor(b => b.Id).NotEmpty().WithName("Kode Barang").WithMessage("{PropertyName} belum diisi")
+                .Matches(@"^B+[0-9]{3}$").When(b => !string.IsNullOrEmpty(b.Id), ApplyConditionTo.CurrentValidator)
                 .WithMessage("{PropertyName} harus diawali huruf 'B' dan ikuti 3 digit angka");
             RuleFor(b => b.NamaBarang).NotEmpty().WithName("Nama Barang").WithMessage("{PropertyName} belum diisi");
 

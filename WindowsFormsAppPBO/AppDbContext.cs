@@ -31,7 +31,7 @@ namespace WindowsFormsAppPBO
 
             //Primary Key barang
             modelBuilder.Entity<Barang>()
-                .HasKey(x => x.KodeBarang);
+                .HasKey(x => x.Id);
 
             //Primary Key detail transaksi
             modelBuilder.Entity<DetailTransaksi>()
@@ -39,7 +39,7 @@ namespace WindowsFormsAppPBO
 
             //Primary Key Satuan
             modelBuilder.Entity<Satuan>()
-                .HasKey(s => s.KodeSatuan);
+                .HasKey(s => s.Id);
 
             //Primary Key Detail Barang
             modelBuilder.Entity<DetailBarang>()
@@ -47,7 +47,7 @@ namespace WindowsFormsAppPBO
 
             //Primary Key Konsumen
             modelBuilder.Entity<Konsumen>()
-                .HasKey(k => k.IdKonsumen);
+                .HasKey(k => k.Id);
 
             //Relasi barang - kategori
             modelBuilder.Entity<Barang>()

@@ -38,7 +38,7 @@ namespace WindowsFormsAppPBO.MenuKategori
             dataGridViewData.DataSource = null;
             dataGridViewData.DataSource = db.TblKategori.Select(k => new
             {
-                k.IdKategori,
+                k.Id,
                 k.NamaKategori,
             }).ToList();
         }

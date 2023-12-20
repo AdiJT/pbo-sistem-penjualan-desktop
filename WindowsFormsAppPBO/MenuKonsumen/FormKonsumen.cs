@@ -28,7 +28,7 @@ namespace WindowsFormsAppPBO.MenuKonsumen
             var listKonsumen = dbContext.TblKonsumen.ToList();
             var dataSource = listKonsumen.Select(k => new
             {
-                k.IdKonsumen,
+                k.Id,
                 k.NamaKonsumen,
                 k.NoHP,
                 k.Alamat

@@ -45,7 +45,7 @@ namespace WindowsFormsAppPBO.MenuBarang
             var listBarang = repositoriBarang.GetAll();
             dataGridViewData.DataSource = listBarang.Select(b => new
             {
-                b.KodeBarang,
+                b.Id,
                 b.NamaBarang,
                 b.Kategori?.NamaKategori
             }).ToList();
@@ -55,7 +55,7 @@ namespace WindowsFormsAppPBO.MenuBarang
         {
             if (SelectedBarang != null)
             {
-                var listDetail = repositoriBarang.Get(SelectedBarang.KodeBarang).DaftarDetailBarang.ToList();
+                var listDetail = repositoriBarang.Get(SelectedBarang.Id).DaftarDetailBarang.ToList();
                 var listDataSource = listDetail.Select(dt => new
                 {
                     dt.KodeSatuan,
@@ -145,7 +145,7 @@ namespace WindowsFormsAppPBO.MenuBarang
         {
             if (SelectedBarang != null)
             {
-                labelDetail.Text = $"Detail Barang : {SelectedBarang.KodeBarang}";
+                labelDetail.Text = $"Detail Barang : {SelectedBarang.Id}";
                 RefreshDataGridDetail();
             }
         }

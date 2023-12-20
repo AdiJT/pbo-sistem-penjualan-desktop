@@ -33,7 +33,7 @@ namespace WindowsFormsAppPBO.MenuSatuan
             var listSatuan = dbContext.TblSatuan.ToList();
             var dataSource = listSatuan.Select(s => new
             {
-                s.KodeSatuan,
+                s.Id,
                 s.NamaSatuan
             }).ToList();
             dataGridViewData.DataSource = dataSource;

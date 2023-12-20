@@ -3,10 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using WindowsFormsAppPBO.Entitas.Commons;
 
 namespace WindowsFormsAppPBO.Repositori.Commons
 {
-    public abstract class BaseSqlRepositori<T> : IBaseRepositori<T> where T : class
+    public abstract class BaseSqlRepositori<T> : IBaseRepositori<T> where T : BaseEntitas
     {
         protected readonly AppDbContext dbContext;
 

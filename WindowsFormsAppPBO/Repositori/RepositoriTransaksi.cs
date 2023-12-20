@@ -30,7 +30,7 @@ namespace WindowsFormsAppPBO.Repositori
         {
             var result = dbContext.TblTransaksi.Include(t => t.Konsumen)
                 .Include(t => t.DaftarDetailTransaksi)
-                .FirstOrDefault(t => t.IdTransaksi == id);
+                .FirstOrDefault(t => t.Id == id);
 
             return result;
         }

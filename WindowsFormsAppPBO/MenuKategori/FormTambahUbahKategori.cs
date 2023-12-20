@@ -37,7 +37,7 @@ namespace WindowsFormsAppPBO.MenuKategori
         {
             if(SelectedKategori != null)
             {
-                textBoxKodeKategori.Text = SelectedKategori.IdKategori;
+                textBoxKodeKategori.Text = SelectedKategori.Id;
                 textBoxNamaKategori.Text = SelectedKategori.NamaKategori;
 
                 if (Mode == FormMode.Edit)
@@ -58,7 +58,7 @@ namespace WindowsFormsAppPBO.MenuKategori
 
                     var kategoriBaru = new Kategori()
                     {
-                        IdKategori = kodeKategori,
+                        Id = kodeKategori,
                         NamaKategori = namaKategori,
                     };
 
@@ -120,7 +120,7 @@ namespace WindowsFormsAppPBO.MenuKategori
         private void textBoxKodeKategori_Validating(object sender, CancelEventArgs e)
         {
             e = ValidasiTextBox<string, Kategori>(new ValidatorKategori(), textBoxKodeKategori,
-                k => k.IdKategori, s => s, e);
+                k => k.Id, s => s, e);
 
             if (!e.Cancel && Mode == FormMode.Add && db.TblKategori.Find(textBoxKodeKategori.Text.Trim()) != null)
             {

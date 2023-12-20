@@ -7,13 +7,12 @@ using System.Data.Entity;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using WindowsFormsAppPBO.Entitas.Commons;
 
 namespace WindowsFormsAppPBO.Entitas
 {
-    public class Transaksi
+    public class Transaksi : BaseEntitas
     {
-        [Key]
-        public string IdTransaksi { get; set; }
         public DateTime Tanggal { get; set; }
         public decimal Total { get => DaftarDetailTransaksi.Select(dt => dt.SubTotal).Sum(); }
         public decimal Diskon { get; set; }
@@ -75,7 +74,7 @@ namespace WindowsFormsAppPBO.Entitas
 
             string nota = "";
 
-            nota += $"No Nota : {transaksi.IdTransaksi}\n";
+            nota += $"No Nota : {transaksi.Id}\n";
             nota += $"Nama    : {transaksi.Konsumen.NamaKonsumen}\n";
             nota += $"Alamat  : {transaksi.Konsumen.Alamat}\n";
             nota += $"No HP   : {transaksi.Konsumen.NoHP}\n";
@@ -99,7 +98,7 @@ namespace WindowsFormsAppPBO.Entitas
         {
             this._dbContext = dbContext;
 
-            RuleFor(t => t.IdTransaksi).NotEmpty().WithName("ID Transaksi")
+            RuleFor(t => t.Id).NotEmpty().WithName("ID Transaksi")
                 .WithMessage("{PropertyName} belum diisi");
 
             RuleFor(t => t.Tanggal).NotNull().WithName("Tanggal Transaksi")
