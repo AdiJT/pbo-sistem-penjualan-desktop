@@ -2,6 +2,7 @@
 using FluentValidation.Internal;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Data.Entity.Migrations;
 using System.Linq;
 using System.Linq.Expressions;
@@ -40,7 +41,7 @@ namespace WindowsFormsAppPBO.MenuBarang
             {
                 comboBoxKategori.DataSource = listKategori;
                 comboBoxKategori.DisplayMember = "NamaKategori";
-                comboBoxKategori.ValueMember = "IdKategori";
+                comboBoxKategori.ValueMember = "Id";
                 comboBoxKategori.SelectedIndex = 0;
             }
 
@@ -49,7 +50,7 @@ namespace WindowsFormsAppPBO.MenuBarang
             {
                 comboBoxSatuan.DataSource = listSatuan;
                 comboBoxSatuan.DisplayMember = "NamaSatuan";
-                comboBoxSatuan.ValueMember = "KodeSatuan";
+                comboBoxSatuan.ValueMember = "Id";
                 comboBoxSatuan.SelectedIndex = 0;
             }
 
@@ -290,7 +291,7 @@ namespace WindowsFormsAppPBO.MenuBarang
             }
         }
 
-        void ValidateTextBoxBarang<T>(string nama, Expression<Func<Barang, object>> properti, TextBox textBox, Func<string, T> parser, System.ComponentModel.CancelEventArgs e)
+        CancelEventArgs ValidateTextBoxBarang<T>(string nama, Expression<Func<Barang, object>> properti, TextBox textBox, Func<string, T> parser, System.ComponentModel.CancelEventArgs e)
         {
             try
             {
@@ -316,18 +317,21 @@ namespace WindowsFormsAppPBO.MenuBarang
                 });
 
                 isBarangValid = isBarangValid && true;
+                return e;
             }
             catch (ValidationException ex)
             {
                 errorProvider1.SetError(textBox, string.Join("\n", ex.Errors.Select(ve => ve.ErrorMessage)));
                 isBarangValid = isBarangValid && false;
                 e.Cancel = true;
+                return e;
             }
             catch (Exception ex)
             {
                 errorProvider1.SetError(textBox, ex.Message);
                 isBarangValid = isBarangValid && false;
                 e.Cancel = true;
+                return e;
             }
         }
 
@@ -368,7 +372,15 @@ namespace WindowsFormsAppPBO.MenuBarang
 
         private void textBoxKodeBarang_Validating(object sender, System.ComponentModel.CancelEventArgs e)
         {
-            ValidateTextBoxBarang<string>("Kode Barang", b => b.Id, textBoxKodeBarang, s => s, e);
+            e = ValidateTextBoxBarang<string>("Kode Barang", b => b.Id, textBoxKodeBarang, s => s, e);
+            if(e.Cancel == false)
+            {
+                var barang = repositoriBarang.Get(textBoxKodeBarang.Text);
+                if(barang != null && EditMode == false)
+                {
+                    errorProvider1.SetError(textBoxKodeBarang, "Sudah Ada Barang dengan Kode yang Sama");
+                }
+            }
         }
 
         private void textBoxNamaBarang_Validating(object sender, System.ComponentModel.CancelEventArgs e)

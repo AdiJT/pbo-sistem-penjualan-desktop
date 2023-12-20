@@ -18,9 +18,12 @@ namespace WindowsFormsAppPBO.Repositori.Commons
 
         public virtual T Add(T item)
         {
-            var result = dbContext.Set<T>().Add(item);
-            dbContext.SaveChanges();
-            return result;
+            if (dbContext.Set<T>().Find(item.Id) == null)
+            {
+                var result = dbContext.Set<T>().Add(item);
+                dbContext.SaveChanges();
+            }
+            return null;
         }
 
         public virtual T Delete(string id)
