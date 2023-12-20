@@ -5,6 +5,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using WindowsFormsAppPBO.Entitas;
+using WindowsFormsAppPBO.Repositori;
+using WindowsFormsAppPBO.Repositori.Commons;
 
 namespace WindowsFormsAppPBO
 {
@@ -135,6 +138,31 @@ namespace WindowsFormsAppPBO
 
             return strTabel;
         } 
+
+        public static IBaseRepositori<Barang> GetRepositoriBarang()
+        {
+            return new RepositoriBarang(AppDbContext.DbContext);
+        }
+
+        public static IBaseRepositori<Kategori> GetRepositoriKategori()
+        {
+            return new RepositoriKategori(AppDbContext.DbContext);
+        }
+
+        public static IBaseRepositori<Satuan> GetRepositoriSatuan()
+        {
+            return new RepositoriSatuan(AppDbContext.DbContext);
+        }
+
+        public static IBaseRepositori<Konsumen> GetRepositoriKonsumen()
+        {
+            return new RepositoriKonsumen(AppDbContext.DbContext);
+        }
+
+        public static IBaseRepositori<Transaksi> GetRepositoriTransaksi()
+        {
+            return new RepositoriTransaksi(AppDbContext.DbContext);
+        }
     }
 
     public class Kolom

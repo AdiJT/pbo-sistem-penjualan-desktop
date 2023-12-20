@@ -156,7 +156,7 @@ namespace WindowsFormsAppPBO.MenuBarang
             
             barangBaru.DaftarDetailBarang = listDetailBaru;
             
-            var validator = new ValidatorBarang(AppDbContext.GetDbContext);
+            var validator = new ValidatorBarang(repositoriKategori);
             validator.Validate(barangBaru, options => options.ThrowOnFailures());
 
             repositoriBarang.Add(barangBaru);
@@ -256,7 +256,7 @@ namespace WindowsFormsAppPBO.MenuBarang
             {
                 errorProvider1.SetError(textBox, null);
 
-                var validator = new DetailBarangValidator(AppDbContext.GetDbContext);
+                var validator = new DetailBarangValidator(AppDbContext.DbContext);
                 var strTextBox = textBox.Text.Trim();
                 T nilai = default;
                 var detail = new DetailBarang();
@@ -297,7 +297,7 @@ namespace WindowsFormsAppPBO.MenuBarang
             {
                 errorProvider1.SetError(textBox, null);
 
-                var validator = new ValidatorBarang(AppDbContext.GetDbContext);
+                var validator = new ValidatorBarang(repositoriKategori);
                 var strTextBox = textBox.Text.Trim();
                 T nilai = default;
                 var barang = new Barang();

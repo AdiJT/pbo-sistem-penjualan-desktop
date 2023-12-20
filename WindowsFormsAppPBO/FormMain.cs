@@ -43,7 +43,7 @@ namespace WindowsFormsAppPBO
         public static FormMain Instance { 
             get 
             {
-                if(instance == null) instance = new FormMain(AppDbContext.GetDbContext);
+                if(instance == null) instance = new FormMain(AppDbContext.DbContext);
                 return instance; 
             } 
         }
@@ -335,36 +335,36 @@ namespace WindowsFormsAppPBO
 
         private void barangToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            var formBarang = new FormBarang(new RepositoriBarang(AppDbContext.GetDbContext), 
-                new RepositoriKategori(AppDbContext.GetDbContext), new RepositoriSatuan(AppDbContext.GetDbContext));
+            var formBarang = new FormBarang(Utilitas.GetRepositoriBarang(), 
+                Utilitas.GetRepositoriKategori(), Utilitas.GetRepositoriSatuan());
             this.Hide();
             formBarang.Show();
         }
 
         private void kategoriToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            var formKategori = new FormKategori(AppDbContext.GetDbContext);
+            var formKategori = new FormKategori(AppDbContext.DbContext);
             this.Hide();
             formKategori.Show();
         }
 
         private void transaksiToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            var formTransaksi = new FormTransaksi(AppDbContext.GetDbContext);
+            var formTransaksi = new FormTransaksi(AppDbContext.DbContext);
             this.Hide();
             formTransaksi.Show();
         }
 
         private void satuanToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            var formSatuan = new FormSatuan(AppDbContext.GetDbContext);
+            var formSatuan = new FormSatuan(AppDbContext.DbContext);
             this.Hide();
             formSatuan.Show();
         }
 
         private void konsumenToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            var formKonsumen = new FormKonsumen(AppDbContext.GetDbContext);
+            var formKonsumen = new FormKonsumen(AppDbContext.DbContext);
             this.Hide();
             formKonsumen.Show();
         }

@@ -16,7 +16,7 @@ namespace WindowsFormsAppPBO
         }
 
         private static AppDbContext Instance;
-        public static AppDbContext GetDbContext { 
+        public static AppDbContext DbContext { 
             get
             {
                 if(Instance == null) 
