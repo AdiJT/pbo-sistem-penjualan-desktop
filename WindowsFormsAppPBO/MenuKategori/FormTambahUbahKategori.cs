@@ -12,19 +12,20 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using WindowsFormsAppPBO.Entitas;
+using WindowsFormsAppPBO.Repositori.Commons;
 
 namespace WindowsFormsAppPBO.MenuKategori
 {
     public partial class FormTambahUbahKategori : Form
     {
-        private readonly AppDbContext db;
+        private readonly IBaseRepositori<Kategori> repositoriKategori;
 
         public Kategori SelectedKategori { get; set; }
         public FormMode Mode { get; set; }
 
-        public FormTambahUbahKategori(AppDbContext db)
+        public FormTambahUbahKategori(IBaseRepositori<Kategori> repositoriKategori)
         {
-            this.db = db;
+            this.repositoriKategori = repositoriKategori;
             InitializeComponent();
         }
 
@@ -62,8 +63,11 @@ namespace WindowsFormsAppPBO.MenuKategori
                         NamaKategori = namaKategori,
                     };
 
-                    db.TblKategori.AddOrUpdate(kategoriBaru);
-                    db.SaveChanges();
+                    if (Mode == FormMode.Add)
+                        repositoriKategori.Add(kategoriBaru);
+                    else
+                        repositoriKategori.Update(kategoriBaru.Id, kategoriBaru);
+
                     if (Mode == FormMode.Edit)
                         Utilitas.ShowSuccess($"Kategori dengan ID '{kodeKategori}' Sukses diubah!");
                     else
@@ -122,7 +126,7 @@ namespace WindowsFormsAppPBO.MenuKategori
             e = ValidasiTextBox<string, Kategori>(new ValidatorKategori(), textBoxKodeKategori,
                 k => k.Id, s => s, e);
 
-            if (!e.Cancel && Mode == FormMode.Add && db.TblKategori.Find(textBoxKodeKategori.Text.Trim()) != null)
+            if (!e.Cancel && Mode == FormMode.Add && repositoriKategori.Get(textBoxKodeKategori.Text.Trim()) != null)
             {
                 errorProvider1.SetError(textBoxKodeKategori, $"Sudah ada kategori dengan kode {textBoxKodeKategori.Text.Trim()}");
             }

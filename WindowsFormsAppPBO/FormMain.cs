@@ -343,7 +343,7 @@ namespace WindowsFormsAppPBO
 
         private void kategoriToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            var formKategori = new FormKategori(AppDbContext.DbContext);
+            var formKategori = new FormKategori(Utilitas.GetRepositoriKategori());
             this.Hide();
             formKategori.Show();
         }

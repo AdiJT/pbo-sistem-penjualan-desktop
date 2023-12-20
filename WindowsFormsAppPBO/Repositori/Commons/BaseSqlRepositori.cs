@@ -40,7 +40,8 @@ namespace WindowsFormsAppPBO.Repositori.Commons
 
         public virtual T Get(string id)
         {
-            var result = dbContext.Set<T>().Find(id);
+            var result = dbContext.Set<T>()
+                .AsNoTracking().FirstOrDefault(x => x.Id == id);
 
             return result;
         }

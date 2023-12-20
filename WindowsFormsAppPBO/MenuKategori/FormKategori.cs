@@ -9,25 +9,26 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using WindowsFormsAppPBO.Entitas;
 using WindowsFormsAppPBO.MenuBarang;
+using WindowsFormsAppPBO.Repositori.Commons;
 
 namespace WindowsFormsAppPBO.MenuKategori
 {
     public partial class FormKategori : Form
     {
-        private readonly AppDbContext db;
+        private readonly IBaseRepositori<Kategori> repositoriKategori;
 
         public Kategori SelectedKategori { get; set; }
 
-        public FormKategori(AppDbContext db)
+        public FormKategori(IBaseRepositori<Kategori> repositoriKategori)
         {
-            this.db = db;
+            this.repositoriKategori = repositoriKategori;           
             InitializeComponent();
             RefreshDataGrid();
         }
 
         private void buttonTambah_Click(object sender, EventArgs e)
         {
-            var formTambahKategori = new FormTambahUbahKategori(db);
+            var formTambahKategori = new FormTambahUbahKategori(repositoriKategori);
             formTambahKategori.Mode = FormMode.Add;
             formTambahKategori.ShowDialog();
             RefreshDataGrid();
@@ -35,8 +36,7 @@ namespace WindowsFormsAppPBO.MenuKategori
 
         private void RefreshDataGrid()
         {
-            dataGridViewData.DataSource = null;
-            dataGridViewData.DataSource = db.TblKategori.Select(k => new
+            dataGridViewData.DataSource = repositoriKategori.GetAll().Select(k => new
             {
                 k.Id,
                 k.NamaKategori,
@@ -67,7 +67,7 @@ namespace WindowsFormsAppPBO.MenuKategori
 
                 if (kodeKategori != null)
                 {
-                    SelectedKategori = db.TblKategori.Find(kodeKategori);
+                    SelectedKategori = repositoriKategori.Get(kodeKategori);
                 }
             }
         }
@@ -76,7 +76,7 @@ namespace WindowsFormsAppPBO.MenuKategori
         {
             if (SelectedKategori != null)
             {
-                var formUbahKategori = new FormTambahUbahKategori(db);
+                var formUbahKategori = new FormTambahUbahKategori(repositoriKategori);
                 formUbahKategori.SelectedKategori = SelectedKategori;
                 formUbahKategori.Mode = FormMode.Edit;
                 formUbahKategori.ShowDialog();
@@ -99,11 +99,9 @@ namespace WindowsFormsAppPBO.MenuKategori
                 {
                     foreach (var item in listKategoriTerpilih)
                     {
-                        var kategori = db.TblKategori.Find(item);
-                        db.TblKategori.Remove(kategori);
+                        repositoriKategori.Delete(item);
                     }
 
-                    db.SaveChanges();
                     Utilitas.ShowSuccess($"{listKategoriTerpilih.Count} Kategori berhasil dihapus!");
                     SelectedKategori = null;
                     dataGridViewData.ClearSelection();
