@@ -10,20 +10,21 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using WindowsFormsAppPBO.Entitas;
+using WindowsFormsAppPBO.Repositori.Commons;
 
 namespace WindowsFormsAppPBO.MenuKonsumen
 {
     public partial class FormTambahUbahKonsumen : Form
     {
-        private readonly AppDbContext dbContext;
+        private readonly IBaseRepositori<Konsumen> repositoriKonsumen;
 
         public Konsumen SelectedKonsumen { get; set; }
         public FormMode Mode { get; set; } = FormMode.Add;
 
-        public FormTambahUbahKonsumen(AppDbContext dbContext)
+        public FormTambahUbahKonsumen(IBaseRepositori<Konsumen> repositoriKonsumen)
         {
             InitializeComponent();
-            this.dbContext = dbContext;
+            this.repositoriKonsumen = repositoriKonsumen;
         }
 
         private void buttonKembali_Click(object sender, EventArgs e)
@@ -187,12 +188,14 @@ namespace WindowsFormsAppPBO.MenuKonsumen
 
                     if (Mode == FormMode.Add)
                     {
-                        if (dbContext.TblKonsumen.Find(idKonsumen) != null)
+                        if (repositoriKonsumen.Get(idKonsumen) != null)
                             throw new Exception($"Simpan gagal, Konsumen dengan kode {idKonsumen} sudah digunakan");
                     }
 
-                    dbContext.TblKonsumen.AddOrUpdate(Konsumen);
-                    dbContext.SaveChanges();
+                    if (Mode == FormMode.Add)
+                        repositoriKonsumen.Add(Konsumen);
+                    else
+                        repositoriKonsumen.Update(Konsumen.Id, Konsumen);
 
                     var strMode = Mode == FormMode.Add ? "tambahkan" : "diubah";
                     Utilitas.ShowSuccess($"Konsumen dengan kode {idKonsumen} berhasil di {strMode}!");
@@ -203,16 +206,6 @@ namespace WindowsFormsAppPBO.MenuKonsumen
             {
                 Utilitas.ShowError(ex.Message);
             }
-        }
-
-        private void labelNoHp_Click(object sender, EventArgs e)
-        {
-
-        }
-
-        private void panel2_Paint(object sender, PaintEventArgs e)
-        {
-
         }
     }
 }

@@ -8,24 +8,26 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using WindowsFormsAppPBO.Entitas;
+using WindowsFormsAppPBO.Repositori.Commons;
 
 namespace WindowsFormsAppPBO.MenuKonsumen
 {
     public partial class FormKonsumen : Form
     {
-        private readonly AppDbContext dbContext;
+        private readonly IBaseRepositori<Konsumen> repositoriKonsumen;
+
         private Konsumen SelectedKonsumen { get; set; }
 
-        public FormKonsumen(AppDbContext dbContext)
+        public FormKonsumen(IBaseRepositori<Konsumen> repositoriKonsumen)
         {
+            this.repositoriKonsumen = repositoriKonsumen;
             InitializeComponent();
-            this.dbContext = dbContext;
             RefreshDataGridData();
         }
 
         void RefreshDataGridData()
         {
-            var listKonsumen = dbContext.TblKonsumen.ToList();
+            var listKonsumen = repositoriKonsumen.GetAll();
             var dataSource = listKonsumen.Select(k => new
             {
                 k.Id,
@@ -61,7 +63,7 @@ namespace WindowsFormsAppPBO.MenuKonsumen
 
             if(idKonsumen != null)
             {
-                var konsumen = dbContext.TblKonsumen.Find(idKonsumen);
+                var konsumen = repositoriKonsumen.Get(idKonsumen);
 
                 if (konsumen != null)
                     SelectedKonsumen = konsumen;
@@ -83,12 +85,9 @@ namespace WindowsFormsAppPBO.MenuKonsumen
                 foreach(DataGridViewRow row in  dataGridViewData.SelectedRows)
                 {
                     var idKonsumen = row.Cells[0].Value.ToString();
-                    var konsumen = dbContext.TblKonsumen.Find(idKonsumen);
-
-                    dbContext.TblKonsumen.Remove(konsumen);
+                    repositoriKonsumen.Delete(idKonsumen);
                 }
 
-                dbContext.SaveChanges();
                 SelectedKonsumen = null;
                 Utilitas.ShowSuccess($"{dataGridViewData.SelectedRows.Count} konsumen dihapus");
                 RefreshDataGridData();              
@@ -101,7 +100,7 @@ namespace WindowsFormsAppPBO.MenuKonsumen
 
         private void buttonTambah_Click(object sender, EventArgs e)
         {
-            var formTambah = new FormTambahUbahKonsumen(dbContext) { Mode = FormMode.Add };
+            var formTambah = new FormTambahUbahKonsumen(repositoriKonsumen) { Mode = FormMode.Add };
             formTambah.ShowDialog();
             RefreshDataGridData();
         }
@@ -110,7 +109,7 @@ namespace WindowsFormsAppPBO.MenuKonsumen
         {
             if (SelectedKonsumen != null)
             {
-                var formUbah = new FormTambahUbahKonsumen(dbContext)
+                var formUbah = new FormTambahUbahKonsumen(repositoriKonsumen)
                 {
                     Mode = FormMode.Edit,
                     SelectedKonsumen = SelectedKonsumen

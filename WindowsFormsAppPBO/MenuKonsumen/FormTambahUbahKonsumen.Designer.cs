@@ -57,7 +57,6 @@
             this.panel2.Padding = new System.Windows.Forms.Padding(7);
             this.panel2.Size = new System.Drawing.Size(517, 46);
             this.panel2.TabIndex = 12;
-            this.panel2.Paint += new System.Windows.Forms.PaintEventHandler(this.panel2_Paint);
             // 
             // buttonSimpan
             // 
@@ -151,7 +150,6 @@
             this.labelNoHp.Size = new System.Drawing.Size(56, 13);
             this.labelNoHp.TabIndex = 13;
             this.labelNoHp.Text = "Nomor HP";
-            this.labelNoHp.Click += new System.EventHandler(this.labelNoHp_Click);
             // 
             // textBoxAlamat
             // 

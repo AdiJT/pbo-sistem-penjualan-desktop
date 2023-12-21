@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data.Entity.Migrations;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -56,13 +57,10 @@ namespace WindowsFormsAppPBO.Repositori.Commons
 
         public virtual T Update(string id, T item)
         {
-            var result = dbContext.Set<T>().Find(id);
+            var result = Get(id);
             if(result != null)
             {
-                foreach(var property in result.GetType().GetProperties())
-                {
-                    property.SetValue(result, property.GetValue(item));
-                }
+                dbContext.Set<T>().AddOrUpdate(item);
                 dbContext.SaveChanges();
             }
             return result;

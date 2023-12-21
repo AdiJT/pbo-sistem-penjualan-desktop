@@ -129,7 +129,7 @@ namespace WindowsFormsAppPBO
             var konsumen = db.TblKonsumen.FirstOrDefault(k => k.NamaKonsumen == namaKonsumen);
             if(konsumen == null)
             {
-                var formTambahKonsumen = new FormTambahUbahKonsumen(db)
+                var formTambahKonsumen = new FormTambahUbahKonsumen(Utilitas.GetRepositoriKonsumen())
                 {
                     SelectedKonsumen = new Konsumen
                     {
@@ -364,7 +364,7 @@ namespace WindowsFormsAppPBO
 
         private void konsumenToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            var formKonsumen = new FormKonsumen(AppDbContext.DbContext);
+            var formKonsumen = new FormKonsumen(Utilitas.GetRepositoriKonsumen());
             this.Hide();
             formKonsumen.Show();
         }
