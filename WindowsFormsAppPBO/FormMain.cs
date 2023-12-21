@@ -357,7 +357,7 @@ namespace WindowsFormsAppPBO
 
         private void satuanToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            var formSatuan = new FormSatuan(AppDbContext.DbContext);
+            var formSatuan = new FormSatuan(Utilitas.GetRepositoriSatuan());
             this.Hide();
             formSatuan.Show();
         }

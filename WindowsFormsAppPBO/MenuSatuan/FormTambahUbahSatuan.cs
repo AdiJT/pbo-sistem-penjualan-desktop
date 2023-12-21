@@ -10,20 +10,21 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using WindowsFormsAppPBO.Entitas;
+using WindowsFormsAppPBO.Repositori.Commons;
 
 namespace WindowsFormsAppPBO.MenuSatuan
 {
     public partial class FormTambahUbahSatuan : Form
     {
-        private readonly AppDbContext dbContext;
+        private readonly IBaseRepositori<Satuan> repositoriSatuan;
 
         public FormMode Mode { get; set; } = FormMode.Add;
         public Satuan SelectedSatuan { get; set; }
         
-        public FormTambahUbahSatuan(AppDbContext dbContext)
+        public FormTambahUbahSatuan(IBaseRepositori<Satuan> repositoriSatuan)
         {
             InitializeComponent();
-            this.dbContext = dbContext;
+            this.repositoriSatuan = repositoriSatuan;
         }
 
         private void buttonKembali_Click(object sender, EventArgs e)
@@ -117,12 +118,14 @@ namespace WindowsFormsAppPBO.MenuSatuan
 
                     if (Mode == FormMode.Add)
                     {
-                        if (dbContext.TblSatuan.Find(kodeSatuan) != null)
+                        if (repositoriSatuan.Get(kodeSatuan) != null)
                             throw new Exception($"Simpan gagal, satuan dengan kode {kodeSatuan} sudah digunakan");
                     }
 
-                    dbContext.TblSatuan.AddOrUpdate(satuan);
-                    dbContext.SaveChanges();
+                    if (Mode == FormMode.Add)
+                        repositoriSatuan.Add(satuan);
+                    else
+                        repositoriSatuan.Update(satuan.Id, satuan);
 
                     var strMode = Mode == FormMode.Add ? "tambahkan" : "diubah";
                     Utilitas.ShowSuccess($"Satuan dengan kode {kodeSatuan} berhasil di {strMode}!");

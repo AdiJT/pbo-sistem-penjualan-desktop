@@ -8,18 +8,20 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using WindowsFormsAppPBO.Entitas;
+using WindowsFormsAppPBO.Repositori.Commons;
 
 namespace WindowsFormsAppPBO.MenuSatuan
 {
     public partial class FormSatuan : Form
     {
-        private readonly AppDbContext dbContext;
+        private readonly IBaseRepositori<Satuan> repositoriSatuan;
+
         private Satuan SelectedSatuan { get; set; }
 
-        public FormSatuan(AppDbContext dbContext)
+        public FormSatuan(IBaseRepositori<Satuan> repositoriSatuan)
         {
+            this.repositoriSatuan = repositoriSatuan;
             InitializeComponent();
-            this.dbContext = dbContext;
             RefreshDataGrid();
         }
 
@@ -30,7 +32,7 @@ namespace WindowsFormsAppPBO.MenuSatuan
 
         void RefreshDataGrid()
         {
-            var listSatuan = dbContext.TblSatuan.ToList();
+            var listSatuan = repositoriSatuan.GetAll();
             var dataSource = listSatuan.Select(s => new
             {
                 s.Id,
@@ -56,7 +58,7 @@ namespace WindowsFormsAppPBO.MenuSatuan
 
             if(kodeSatuan != null)
             {
-                var satuan = dbContext.TblSatuan.Find(kodeSatuan);
+                var satuan = repositoriSatuan.Get(kodeSatuan);
                 
                 if(satuan != null)
                     SelectedSatuan = satuan;
@@ -75,10 +77,8 @@ namespace WindowsFormsAppPBO.MenuSatuan
                         foreach (var row in dataGridViewData.SelectedRows)
                         {
                             var kodeSatuan = (row as DataGridViewRow).Cells[0].Value.ToString();
-                            var satuan = dbContext.TblSatuan.Find(kodeSatuan);
-                            dbContext.TblSatuan.Remove(satuan);
+                            repositoriSatuan.Delete(kodeSatuan);
                         }
-                        dbContext.SaveChanges();
 
                         SelectedSatuan = null;
 
@@ -95,7 +95,7 @@ namespace WindowsFormsAppPBO.MenuSatuan
 
         private void buttonTambah_Click(object sender, EventArgs e)
         {
-            var formTambah = new FormTambahUbahSatuan(dbContext) { Mode = FormMode.Add };
+            var formTambah = new FormTambahUbahSatuan(repositoriSatuan) { Mode = FormMode.Add };
             formTambah.ShowDialog();
             RefreshDataGrid();
         }
@@ -104,7 +104,7 @@ namespace WindowsFormsAppPBO.MenuSatuan
         {
             if (SelectedSatuan != null)
             {
-                var formUbah = new FormTambahUbahSatuan(dbContext) { Mode = FormMode.Edit, SelectedSatuan = SelectedSatuan };
+                var formUbah = new FormTambahUbahSatuan(repositoriSatuan) { Mode = FormMode.Edit, SelectedSatuan = SelectedSatuan };
                 formUbah.ShowDialog();
                 RefreshDataGrid();
             }
