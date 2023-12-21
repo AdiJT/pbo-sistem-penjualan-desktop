@@ -8,6 +8,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using WindowsFormsAppPBO.Entitas.Commons;
+using WindowsFormsAppPBO.Repositori.Commons;
 
 namespace WindowsFormsAppPBO.Entitas
 {
@@ -92,11 +93,10 @@ namespace WindowsFormsAppPBO.Entitas
 
     public class ValidatorTransaksi : AbstractValidator<Transaksi>
     {
-        private readonly AppDbContext _dbContext;
+        private readonly IBaseRepositori<Konsumen> repositoriKonsumen;
 
-        public ValidatorTransaksi(AppDbContext dbContext)
+        public ValidatorTransaksi(IBaseRepositori<Konsumen> repositoriKonsumen)
         {
-            this._dbContext = dbContext;
 
             RuleFor(t => t.Id).NotEmpty().WithName("ID Transaksi")
                 .WithMessage("{PropertyName} belum diisi");
@@ -111,12 +111,13 @@ namespace WindowsFormsAppPBO.Entitas
 
             RuleFor(t => t.IdKonsumen).NotEmpty().WithName("Id Konsumen")
                 .WithMessage("{PropertyName} belum diisi")
-                .Must(id => _dbContext.TblKonsumen.Find(id) != null)
+                .Must(id => repositoriKonsumen.Get(id) != null)
                 .When(t => !string.IsNullOrEmpty(t.IdKonsumen), ApplyConditionTo.CurrentValidator)
                 .WithMessage("{PropertyName} '{PropertyValue}' tidak ada");
 
             RuleFor(t => t.DaftarDetailTransaksi).Must(daftarDetail => daftarDetail.Count > 0)
                 .WithName("Daftar Barang").WithMessage("Jumlah {PropertyName} kurang dari 0");
+            this.repositoriKonsumen = repositoriKonsumen;
         }
     }
 }

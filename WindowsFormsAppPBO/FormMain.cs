@@ -18,6 +18,7 @@ using WindowsFormsAppPBO.MenuKonsumen;
 using WindowsFormsAppPBO.MenuSatuan;
 using WindowsFormsAppPBO.MenuTransaksi;
 using WindowsFormsAppPBO.Repositori;
+using WindowsFormsAppPBO.Repositori.Commons;
 
 namespace WindowsFormsAppPBO
 {
@@ -27,23 +28,29 @@ namespace WindowsFormsAppPBO
         private Barang currentBarang;
         private DetailBarang currentDetailBarang;
         private DetailTransaksi SelectedDetail = null;
-        private readonly AppDbContext db;
 
         private bool isDetailTransaksiValid = false;
         private bool isTransaksiValid = false;
 
-        private FormMain(AppDbContext db)
+        private FormMain(IBaseRepositori<Transaksi> repositoriTransaksi, IBaseRepositori<Barang> repositoriBarang
+            , IBaseRepositori<Konsumen> repositoriKonsumen)
         {
             InitializeComponent();
-            this.db = db;
+            this.repositoriTransaksi = repositoriTransaksi;
+            this.repositoriBarang = repositoriBarang;
+            this.repositoriKonsumen = repositoriKonsumen;
         }
 
         private static FormMain instance;
+        private readonly IBaseRepositori<Transaksi> repositoriTransaksi;
+        private readonly IBaseRepositori<Barang> repositoriBarang;
+        private readonly IBaseRepositori<Konsumen> repositoriKonsumen;
 
         public static FormMain Instance { 
             get 
             {
-                if(instance == null) instance = new FormMain(AppDbContext.DbContext);
+                if(instance == null) instance = new FormMain(Utilitas.GetRepositoriTransaksi(), Utilitas.GetRepositoriBarang()
+                    ,Utilitas.GetRepositoriKonsumen());
                 return instance; 
             } 
         }
@@ -122,11 +129,14 @@ namespace WindowsFormsAppPBO
                     Jumlah = DetailTransaksis[i].Jumlah
                 };
 
-                var detailBarang = db.TblDetailBarang.Find(listDetail[i].KodeBarang, listDetail[i].KodeSatuan);
+                var barang = repositoriBarang.Get(listDetail[i].KodeBarang);
+                var detailBarang = barang.DaftarDetailBarang
+                    .FirstOrDefault(dt => dt.KodeSatuan == listDetail[i].KodeSatuan);
                 detailBarang.StokBarang -= listDetail[i].Jumlah;
+                repositoriBarang.Update(barang.Id, barang);
             }
 
-            var konsumen = db.TblKonsumen.FirstOrDefault(k => k.NamaKonsumen == namaKonsumen);
+            var konsumen = repositoriKonsumen.GetAll().FirstOrDefault(k => k.NamaKonsumen == namaKonsumen);
             if(konsumen == null)
             {
                 var formTambahKonsumen = new FormTambahUbahKonsumen(Utilitas.GetRepositoriKonsumen())
@@ -141,7 +151,7 @@ namespace WindowsFormsAppPBO
                 formTambahKonsumen.ShowDialog();
             }
 
-            konsumen = db.TblKonsumen.FirstOrDefault(k => k.NamaKonsumen == namaKonsumen);
+            konsumen = repositoriKonsumen.GetAll().FirstOrDefault(k => k.NamaKonsumen == namaKonsumen);
             if (konsumen == null)
                 throw new Exception($"Konsumen dengan nama {namaKonsumen} gagal ditambahkan");
 
@@ -154,11 +164,10 @@ namespace WindowsFormsAppPBO
                 IdKonsumen = konsumen.Id
             };
 
-            var validator = new ValidatorTransaksi(db);
+            var validator = new ValidatorTransaksi(repositoriKonsumen);
             validator.Validate(transaksiBaru, options => options.ThrowOnFailures());
 
-            db.TblTransaksi.Add(transaksiBaru);
-            db.SaveChanges();
+            repositoriTransaksi.Add(transaksiBaru);
             Utilitas.ShowSuccess("Transaksi berhasil ditambahkan");
 
             var confirm = Utilitas.ShowConfirmation("Cetak Nota?");
