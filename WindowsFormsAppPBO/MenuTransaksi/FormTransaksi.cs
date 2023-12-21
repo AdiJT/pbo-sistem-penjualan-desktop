@@ -8,30 +8,31 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using WindowsFormsAppPBO.Entitas;
+using WindowsFormsAppPBO.Repositori.Commons;
 
 namespace WindowsFormsAppPBO.MenuTransaksi
 {
     public partial class FormTransaksi : Form
     {
-        private readonly AppDbContext db;
+        private readonly IBaseRepositori<Transaksi> repositoriTransaksi;
 
         public Transaksi SelectedTransaksi { get; set; }
 
-        public FormTransaksi(AppDbContext db)
+        public FormTransaksi(IBaseRepositori<Transaksi> repositoriTransaksi)
         {
             InitializeComponent();
-            this.db = db;
+            this.repositoriTransaksi = repositoriTransaksi;
             RefreshDataGridData();
         }
 
         void RefreshDataGridData()
         {
-            var listTransaksi = db.TblTransaksi.ToList();
+            var listTransaksi = repositoriTransaksi.GetAll();
             var listTransaksiFormat = listTransaksi.Select(t =>
             new {
                 t.Id,
                 t.IdKonsumen,
-                db.TblKonsumen.Find(t.Konsumen.Id)?.NamaKonsumen,
+                t.Konsumen?.NamaKonsumen,
                 Tanggal = $"{t.Tanggal:d}",
                 Diskon = $"{t.Diskon}%",
                 Total = $"{t.Total:C2}"
@@ -72,7 +73,7 @@ namespace WindowsFormsAppPBO.MenuTransaksi
                 string idTransaksi = dataGridViewData.Rows[e.RowIndex].Cells[0].Value.ToString();
                 if (idTransaksi != null)
                 {
-                    SelectedTransaksi = db.TblTransaksi.Include("DaftarDetailTransaksi").FirstOrDefault(dt => dt.Id == idTransaksi);
+                    SelectedTransaksi = repositoriTransaksi.Get(idTransaksi);
                 }
             }
         }
@@ -94,11 +95,9 @@ namespace WindowsFormsAppPBO.MenuTransaksi
                     foreach (DataGridViewRow item in dataGridViewData.SelectedRows)
                     {
                         var idTransaksi = item.Cells[0].Value.ToString();
-                        var transaksi = db.TblTransaksi.Find(idTransaksi);
-                        db.TblTransaksi.Remove(transaksi);
+                        repositoriTransaksi.Delete(idTransaksi);
                     }
 
-                    db.SaveChanges();
                     Utilitas.ShowSuccess($"{dataGridViewData.SelectedRows.Count} Transaksi berhasil dihapus!");
                     dataGridViewData.ClearSelection();
                     SelectedTransaksi = null;

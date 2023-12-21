@@ -128,12 +128,6 @@ namespace WindowsFormsAppPBO
                     HargaBarang = DetailTransaksis[i].HargaBarang,
                     Jumlah = DetailTransaksis[i].Jumlah
                 };
-
-                var barang = repositoriBarang.Get(listDetail[i].KodeBarang);
-                var detailBarang = barang.DaftarDetailBarang
-                    .FirstOrDefault(dt => dt.KodeSatuan == listDetail[i].KodeSatuan);
-                detailBarang.StokBarang -= listDetail[i].Jumlah;
-                repositoriBarang.Update(barang.Id, barang);
             }
 
             var konsumen = repositoriKonsumen.GetAll().FirstOrDefault(k => k.NamaKonsumen == namaKonsumen);
@@ -173,7 +167,8 @@ namespace WindowsFormsAppPBO
             var confirm = Utilitas.ShowConfirmation("Cetak Nota?");
             if(confirm)
             {
-                var formCetak = new FormNota() { SelectedTransaksi = transaksiBaru};
+                var transaksi = repositoriTransaksi.Get(transaksiBaru.Id);
+                var formCetak = new FormNota() { SelectedTransaksi = transaksi};
                 formCetak.ShowDialog();
             }
         }
@@ -195,7 +190,7 @@ namespace WindowsFormsAppPBO
             var kodeBarang = textBoxKodeBarang.Text.Trim();
             if (kodeBarang != "")
             {
-                var barang = db.TblBarang.Include("DaftarDetailBarang").AsNoTracking()
+                var barang = repositoriBarang.GetAll()
                     .Where(b => b.Id.Contains(kodeBarang)).FirstOrDefault();
                 if (barang != null)
                 {
@@ -359,7 +354,7 @@ namespace WindowsFormsAppPBO
 
         private void transaksiToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            var formTransaksi = new FormTransaksi(AppDbContext.DbContext);
+            var formTransaksi = new FormTransaksi(repositoriTransaksi);
             this.Hide();
             formTransaksi.Show();
         }
@@ -418,7 +413,7 @@ namespace WindowsFormsAppPBO
 
         private void textBoxDiskon_Validating(object sender, CancelEventArgs e)
         {
-            e = ValidasiTextBox(new ValidatorTransaksi(db), textBoxDiskon, t => t.Diskon, 
+            e = ValidasiTextBox(new ValidatorTransaksi(repositoriKonsumen), textBoxDiskon, t => t.Diskon, 
                 s =>
                 {
                     if (!decimal.TryParse(s, out var d))
